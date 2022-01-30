@@ -51,7 +51,7 @@
 @import url(blocks/image-popup/__wrap/image-popup__wrap.css);
 /* Конец image-popup */
 
-/* Начало edit-form */
+/* Начало popup */
 
 @import url(blocks/popup/popup.css);
 @import url(blocks/popup/__form/popup__form.css);
@@ -68,7 +68,9 @@
 @import url(blocks/popup/__about-error/_active/popup__about-error_active.css);
 @import url(blocks/popup/__title-error/_active/popup__title-error_active.css);
 @import url(blocks/popup/__pic-link-error/_active/popup__pic-link-error_active.css);
-/* Конец edit-form */
+@import url(blocks/popup/__info/popup__info.css);
+@import url(blocks/popup/__info-image/popup__info-image.css);
+/* Конец popup */
 
 @import url(blocks/popup/__question/popup__question.css);
 @import url(blocks/popup/__delete-btn/popup__delete-btn.css);
