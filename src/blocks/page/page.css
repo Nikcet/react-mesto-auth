@@ -15,7 +15,14 @@ body {
   color: #fff;
   padding: 45px 0 60px;
   box-sizing: border-box;
+  /* justify-content: space-between; */
 }
+
+/* @media screen and (max-width: 768px) {
+  .page {
+    justify-content: flex-start;
+  }
+} */
 
 @media screen and (max-width: 500px) {
   .page {
