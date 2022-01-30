@@ -1,5 +1,4 @@
 import logo from '../images/logo.svg';
-import { Link } from 'react-router-dom';
 
 function Header(props) {
   return (
@@ -7,7 +6,10 @@ function Header(props) {
       <a href="./index.html" className="header__logo-link">
         <img src={logo} alt="#" className="header__logo" />
       </a>
-      {props.loggedIn ? <Link to="/sign-in" className="header__login-link">Выйти</Link> : <Link to="/sign-in" className="header__login-link">Войти</Link>}
+      <div className="header__account-wrap">
+        {props.loggedIn && <p className='header__email'>{props.email}</p>}
+        <button type="button" className="header__btn-logout" onClick={props.onClick}>{props.loggedIn ? 'Выйти' : 'Войти'}</button>
+      </div>
     </header>
   );
 }
