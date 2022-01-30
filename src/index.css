@@ -10,6 +10,7 @@
 @import url(blocks/header/header.css);
 @import url(blocks/header/__logo/header__logo.css);
 @import url(blocks/header/__logo-link/header__logo-link.css);
+@import url(blocks/header/__login-link/header__login-link.css);
 /* Конец header */
 
 /* Начало profile */
