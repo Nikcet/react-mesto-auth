@@ -12,6 +12,11 @@ import { CardsContext } from "../contexts/CardsContext";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
 import Loading from "../utils/Loading";
+import Login from "./Login";
+import Registration from "./Registration";
+import InfoTooltip from "./InfoTooltip";
+import { Route, Switch, Redirect } from 'react-router-dom';
+import { registration } from '../utils/Auth';
 
 export function App() {
   const defaultUser = {
@@ -24,11 +29,16 @@ export function App() {
   const [currentUser, setCurrentUser] = React.useState(defaultUser);
   const [cardsList, setCardsList] = React.useState([]);
 
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
   const [selectedCard, setSelectedCard] = React.useState(undefined);
   const [activePopup, setActivePopup] = React.useState('');
+
+  const [loggedIn, setLoggedIn] = React.useState(false);
 
   // Монтирование информации о пользователе
   React.useEffect(() => {
@@ -139,22 +149,55 @@ export function App() {
       .catch(err => { console.log("Не удаляется карточка", err) })
   }
 
+  function handleRegistration(event) {
+    event.preventDefault();
+    registration(email, password).then(res => { console.log(res) })
+  }
+
+  function handleAuthorization(event) {
+    event.preventDefault();
+  }
+
+  function handleChange(event) {
+    const target = event.target;
+    const value = target.value;
+    target.name === 'email-input' ? setEmail(value) : setPassword(value);
+  }
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
         <Header />
-        <CardsContext.Provider value={cardsList}>
-          <Main
-            onEditProfile={handleEditProfileClick}
-            onAddPlace={handleAddPlaceClick}
-            onEditAvatar={handleEditAvatarClick}
-            onCardClick={handleCardClick}
-            onUpdateCards={setCardsList}
-            onCardLike={handleCardLike}
-            onDeleteCard={handleCardDelete}
-          />
-        </CardsContext.Provider>
-        <Footer />
+        <Switch>
+          <Route path='/sign-up'>
+            <Registration
+              onSubmit={handleRegistration}
+              onChange={handleChange}
+            />
+          </Route>
+          <Route path='/sign-in'>
+            <Login
+              onChange={handleChange}
+              onSubmit={handleAuthorization}
+            />
+          </Route>
+          <Route path='*'>
+            <CardsContext.Provider value={cardsList}>
+              <Main
+                onEditProfile={handleEditProfileClick}
+                onAddPlace={handleAddPlaceClick}
+                onEditAvatar={handleEditAvatarClick}
+                onCardClick={handleCardClick}
+                onUpdateCards={setCardsList}
+                onCardLike={handleCardLike}
+                onDeleteCard={handleCardDelete}
+              />
+            </CardsContext.Provider>
+            <InfoTooltip title="Вы успешно зарегистрировались!" />
+            <Footer />
+            <Route>{loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}</Route>
+          </Route>
+        </Switch>
         <EditProfilePopup
           isOpen={isEditProfilePopupOpen}
           onClose={closeAllPopups}
