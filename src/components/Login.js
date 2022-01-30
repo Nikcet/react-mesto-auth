@@ -13,7 +13,7 @@ export default function Login(props) {
                         className="login__input login__input-email"
                         placeholder="Email"
                         name="email-input"
-                        inChange={props.onChange}
+                        onChange={props.onChange}
                         required
                     />
                     <input
@@ -22,7 +22,7 @@ export default function Login(props) {
                         className="login__input login__input-password"
                         placeholder="Имя пользователя"
                         name="password-input"
-                        inChange={props.onChange}
+                        onChange={props.onChange}
                         required
                     />
                     <button type="submit" className="login__button">Войти</button>

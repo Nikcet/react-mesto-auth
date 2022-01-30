@@ -15,8 +15,8 @@ import Loading from "../utils/Loading";
 import Login from "./Login";
 import Registration from "./Registration";
 import InfoTooltip from "./InfoTooltip";
-import { Route, Switch, Redirect } from 'react-router-dom';
-import { registration } from '../utils/Auth';
+import { Route, Switch, Redirect, useHistory } from 'react-router-dom';
+import { registration, auth, login } from '../utils/Auth';
 
 export function App() {
   const defaultUser = {
@@ -40,6 +40,8 @@ export function App() {
 
   const [loggedIn, setLoggedIn] = React.useState(false);
 
+  const history = useHistory();
+
   // Монтирование информации о пользователе
   React.useEffect(() => {
     Promise.resolve(api.getUserInfo())
@@ -60,6 +62,10 @@ export function App() {
       .catch(err => {
         console.log("Что-то не так с карточками.", err)
       })
+  }, []);
+
+  React.useEffect(() => {
+    handleLogin();
   }, []);
 
   function handleEditProfileClick() {
@@ -152,10 +158,28 @@ export function App() {
   function handleRegistration(event) {
     event.preventDefault();
     registration(email, password).then(res => { console.log(res) })
+    history.push('/sign-in');
   }
 
   function handleAuthorization(event) {
     event.preventDefault();
+    auth(email, password);
+    handleLogin(event);
+  }
+
+  function handleLogin() {
+    const token = localStorage.getItem('token');
+    if (token) {
+      login(token)
+        .then(data => {
+          setLoggedIn(true);
+          setEmail(data.data.email);
+          history.push('/');
+        })
+        .catch(err => { console.log('Что-то не так с токеном', err) })
+    } else {
+      handleAuthorization();
+    }
   }
 
   function handleChange(event) {
@@ -167,7 +191,10 @@ export function App() {
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
-        <Header />
+        <Header
+          loggedIn={loggedIn}
+          email={email}
+        />
         <Switch>
           <Route path='/sign-up'>
             <Registration
@@ -178,7 +205,7 @@ export function App() {
           <Route path='/sign-in'>
             <Login
               onChange={handleChange}
-              onSubmit={handleAuthorization}
+              onSubmit={handleLogin}
             />
           </Route>
           <Route path='*'>

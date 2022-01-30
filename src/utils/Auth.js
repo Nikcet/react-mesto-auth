@@ -45,16 +45,39 @@ export const auth = (email, password) => {
             body: JSON.stringify({ email, password })
         }
     )
+        .then(response => {
+            try {
+                if (response.status === 200) {
+                    return response.json();
+                }
+            } catch (e) {
+                return (e)
+            }
+        })
+        .then(objectWithToken => {
+            localStorage.setItem('token', objectWithToken.token);
+        })
+        .catch(err => { console.log('Что-то не так с авторизацией', err) })
 }
-// const datas = {
-//     url: 'https://auth.nomoreparties.co/',
-//     headers: {
-//         "Content-Type": "application/json"
-//     },
-//     body: {
-//         "password": "somepassword",
-//         "email": "email@yandex.ru"
-//     }
-// }
 
-// export const auth = Auth(datas);
+export const login = (jwtToken) => {
+    return fetch(
+        `${URL}/users/me`,
+        {
+            method: 'GET',
+            headers: {
+                "Content-Type": "application/json",
+                authorization: `Bearer ${jwtToken}`
+            }
+        }
+    )
+        .then(response => {
+            if (response.status === 200) {
+                return response.json();
+            }
+        })
+        .then(res => {
+            return res;
+        })
+        .catch(err => { console.log('Не залогинился', err) })
+}
