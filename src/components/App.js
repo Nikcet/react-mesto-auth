@@ -34,8 +34,11 @@ export function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
+  const [isRegistrationPopupOpen, setIsRegistrationPopupOpen] = React.useState(false);
+  const [isSuccessRegistration, setIsSuccessRegistration] = React.useState(false);
   const [selectedCard, setSelectedCard] = React.useState(undefined);
   const [activePopup, setActivePopup] = React.useState('');
+  const [isLoginNow, setIsLoginNow] = React.useState(false);
 
   const [loggedIn, setLoggedIn] = React.useState(false);
 
@@ -83,6 +86,10 @@ export function App() {
     setActivePopup(document.querySelector('.popup_type_update-avatar'));
   }
 
+  function handleRegisterPopup() {
+    setIsRegistrationPopupOpen(true);
+  }
+
   function handleCardClick(cardInfo) {
     setSelectedCard({
       ...cardInfo
@@ -94,6 +101,7 @@ export function App() {
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
+    setIsRegistrationPopupOpen(false);
     setSelectedCard(undefined);
   }
 
@@ -158,7 +166,14 @@ export function App() {
   // Регистрация
   function handleRegister({ email, password }) {
     auth.registration(email, password)
-      .catch(err => { console.log('Не зарегистрировался ', err) })
+      .then(() => {
+        setIsSuccessRegistration(true);
+        handleRegisterPopup();
+      })
+      .catch(err => {
+        console.log('Не зарегистрировался ', err);
+        handleRegisterPopup();
+      })
     history.push('/sign-in');
   }
 
@@ -198,23 +213,38 @@ export function App() {
     }
   }
 
+  function toggleCurrentWindow(what) {
+    setIsLoginNow(what);
+  }
+
+  function redirectToRegister() {
+    history.push('/sign-up');
+  }
+
+  function redirectToLogin() {
+    history.push('/sign-in');
+  }
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
         <Header
           loggedIn={loggedIn}
+          isLoginNow={isLoginNow}
           email={email}
-          onClick={loggedIn ? signOut : authorizationAndSignIn}
+          onClick={loggedIn ? signOut : isLoginNow ? redirectToRegister : redirectToLogin}
         />
         <Switch>
           <Route path='/sign-up'>
             <Registration
               onRegister={handleRegister}
+              onLoad={toggleCurrentWindow}
             />
           </Route>
           <Route path='/sign-in'>
             <Login
               onLogin={authorizationAndSignIn}
+              onLoad={toggleCurrentWindow}
             />
           </Route>
           <Route path='*'>
@@ -251,6 +281,7 @@ export function App() {
         />
         <PopupWithForm title="Вы уверены?" name="question" buttonText="Да" id="popup_delete"></PopupWithForm>
         <ImagePopup card={selectedCard} onClose={closeAllPopups} />
+        <InfoTooltip isOpen={isRegistrationPopupOpen} onClose={closeAllPopups} isSuccess={isSuccessRegistration} />
       </div>
     </CurrentUserContext.Provider>
   );

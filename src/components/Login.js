@@ -20,6 +20,10 @@ export default function Login(props) {
         });
     }
 
+    React.useEffect(() => {
+        props.onLoad(true);
+    }, [])
+
     return (
         <div className="login">
             <div className="login__wrapper">
