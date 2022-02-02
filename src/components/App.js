@@ -190,7 +190,7 @@ export function App() {
   }
 
   // Выход
-  function onSignOut() {
+  function signOut() {
     if (loggedIn) {
       localStorage.clear();
       setLoggedIn(false);
@@ -204,7 +204,7 @@ export function App() {
         <Header
           loggedIn={loggedIn}
           email={email}
-          onClick={loggedIn ? onSignOut : authorizationAndSignIn}
+          onClick={loggedIn ? signOut : authorizationAndSignIn}
         />
         <Switch>
           <Route path='/sign-up'>
