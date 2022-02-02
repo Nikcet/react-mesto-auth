@@ -8,7 +8,7 @@ function Header(props) {
       </a>
       <div className="header__account-wrap">
         {props.loggedIn && <p className='header__email'>{props.email}</p>}
-        <button type="button" className="header__btn-logout" onClick={props.onClick}>{props.loggedIn ? 'Выйти' : 'Войти'}</button>
+        <button type="button" className="header__btn-logout" onClick={props.onClick}>{props.loggedIn ? 'Выйти' : props.isLoginNow ? 'Регистрация' : 'Войти'}</button>
       </div>
     </header>
   );
