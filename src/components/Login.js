@@ -14,15 +14,17 @@ export default function Login(props) {
                         placeholder="Email"
                         name="email-input"
                         onChange={props.onChange}
+                        value={props.email}
                         required
                     />
                     <input
                         type="password"
                         id="input-password"
                         className="login__input login__input-password"
-                        placeholder="Имя пользователя"
+                        placeholder="Пароль"
                         name="password-input"
                         onChange={props.onChange}
+                        value={props.password}
                         required
                     />
                     <button type="submit" className="login__button">Войти</button>

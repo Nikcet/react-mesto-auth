@@ -16,7 +16,7 @@ import Login from "./Login";
 import Registration from "./Registration";
 import InfoTooltip from "./InfoTooltip";
 import { Route, Switch, Redirect, useHistory } from 'react-router-dom';
-import { registration, auth, login } from '../utils/Auth';
+import * as auth from '../utils/Auth';
 
 export function App() {
   const defaultUser = {
@@ -65,8 +65,8 @@ export function App() {
   }, []);
 
   React.useEffect(() => {
-    handleLogin();
-  }, []);
+    signIn();
+  }, [loggedIn]);
 
   function handleEditProfileClick() {
     setIsEditProfilePopupOpen(true);
@@ -157,28 +157,45 @@ export function App() {
 
   function handleRegistration(event) {
     event.preventDefault();
-    registration(email, password).then(res => { console.log(res) })
+    auth.registration(email, password).catch(err => { console.log('Не зарегистрировался ', err) })
     history.push('/sign-in');
   }
 
   function handleAuthorization(event) {
     event.preventDefault();
-    auth(email, password);
-    handleLogin(event);
+    authorizationAndSignIn();
   }
 
-  function handleLogin() {
+  function authorizationAndSignIn() {
+    auth.authorization(email, password)
+      .then(() => {
+        if (localStorage.getItem('token')) {
+          signIn();
+        }
+      })
+      .catch(err => { console.log('Не авторизовался ', err) });
+  }
+
+  function signIn() {
     const token = localStorage.getItem('token');
     if (token) {
-      login(token)
+      history.push('/');
+      auth.login(token)
         .then(data => {
           setLoggedIn(true);
-          setEmail(data.data.email);
-          history.push('/');
+          setEmail(data?.data.email);
         })
         .catch(err => { console.log('Что-то не так с токеном', err) })
     } else {
-      handleAuthorization();
+      setLoggedIn(false);
+    }
+  }
+
+  function handleLogout() {
+    if (loggedIn) {
+      localStorage.clear();
+      setLoggedIn(false);
+      history.push('/sign-in');
     }
   }
 
@@ -194,18 +211,23 @@ export function App() {
         <Header
           loggedIn={loggedIn}
           email={email}
+          onClick={loggedIn ? handleLogout : authorizationAndSignIn}
         />
         <Switch>
           <Route path='/sign-up'>
             <Registration
               onSubmit={handleRegistration}
               onChange={handleChange}
+              email={email}
+              password={password}
             />
           </Route>
           <Route path='/sign-in'>
             <Login
               onChange={handleChange}
-              onSubmit={handleLogin}
+              onSubmit={handleAuthorization}
+              email={email}
+              password={password}
             />
           </Route>
           <Route path='*'>
