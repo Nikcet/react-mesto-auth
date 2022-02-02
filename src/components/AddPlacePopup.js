@@ -5,6 +5,11 @@ export default function AddPlacePopup(props) {
     const [name, setName] = React.useState('');
     const [link, setLink] = React.useState('');
 
+    React.useEffect(() => {
+        setName('');
+        setLink('');
+    }, [props.isOpen]);
+
     function handleSubmit(event) {
         event.preventDefault();
 

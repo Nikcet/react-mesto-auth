@@ -2,7 +2,6 @@ import React from 'react';
 import PopupWithForm from './PopupWithForm';
 
 export default function EditAvatarPopup(props) {
-    // const avatarRef = React.useRef();
     const [avatar, setAvatar] = React.useState('');
 
     React.useEffect(() => {
@@ -11,10 +10,6 @@ export default function EditAvatarPopup(props) {
 
     function handleSubmit(event) {
         event.preventDefault();
-
-        // props.onUpdateAvatar({
-        //     avatar: avatarRef.current.value
-        // })
 
         props.onUpdateAvatar({
             avatar
@@ -42,7 +37,6 @@ export default function EditAvatarPopup(props) {
                 name="link"
                 onChange={handleAvatarLink}
                 value={avatar}
-                // ref={avatarRef}
                 required
             />
             <span className="popup__form-error popup__pic-link-error"></span>

@@ -19,6 +19,7 @@ export default function Registration(props) {
                         name="email-input"
                         required
                         onChange={props.onChange}
+                        value={props.email}
                     />
                     <input
                         type="password"
@@ -28,6 +29,7 @@ export default function Registration(props) {
                         name="password-input"
                         required
                         onChange={props.onChange}
+                        value={props.password}
                     />
                     <button
                         type="submit"
