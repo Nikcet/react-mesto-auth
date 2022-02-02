@@ -30,7 +30,6 @@ export function App() {
   const [cardsList, setCardsList] = React.useState([]);
 
   const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
 
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
@@ -64,6 +63,7 @@ export function App() {
       })
   }, []);
 
+  // Автоматически заходит, если в localStorage есть подходящий токен
   React.useEffect(() => {
     signIn();
   }, [loggedIn]);
@@ -155,18 +155,15 @@ export function App() {
       .catch(err => { console.log("Не удаляется карточка", err) })
   }
 
-  function handleRegistration(event) {
-    event.preventDefault();
-    auth.registration(email, password).catch(err => { console.log('Не зарегистрировался ', err) })
+  // Регистрация
+  function handleRegister({ email, password }) {
+    auth.registration(email, password)
+      .catch(err => { console.log('Не зарегистрировался ', err) })
     history.push('/sign-in');
   }
 
-  function handleAuthorization(event) {
-    event.preventDefault();
-    authorizationAndSignIn();
-  }
-
-  function authorizationAndSignIn() {
+  // Авторизация
+  function authorizationAndSignIn({ email, password }) {
     auth.authorization(email, password)
       .then(() => {
         if (localStorage.getItem('token')) {
@@ -176,6 +173,7 @@ export function App() {
       .catch(err => { console.log('Не авторизовался ', err) });
   }
 
+  // Вход
   function signIn() {
     const token = localStorage.getItem('token');
     if (token) {
@@ -183,7 +181,7 @@ export function App() {
       auth.login(token)
         .then(data => {
           setLoggedIn(true);
-          setEmail(data?.data.email);
+          setEmail(data.data.email);
         })
         .catch(err => { console.log('Что-то не так с токеном', err) })
     } else {
@@ -191,18 +189,13 @@ export function App() {
     }
   }
 
-  function handleLogout() {
+  // Выход
+  function onSignOut() {
     if (loggedIn) {
       localStorage.clear();
       setLoggedIn(false);
       history.push('/sign-in');
     }
-  }
-
-  function handleChange(event) {
-    const target = event.target;
-    const value = target.value;
-    target.name === 'email-input' ? setEmail(value) : setPassword(value);
   }
 
   return (
@@ -211,23 +204,17 @@ export function App() {
         <Header
           loggedIn={loggedIn}
           email={email}
-          onClick={loggedIn ? handleLogout : authorizationAndSignIn}
+          onClick={loggedIn ? onSignOut : authorizationAndSignIn}
         />
         <Switch>
           <Route path='/sign-up'>
             <Registration
-              onSubmit={handleRegistration}
-              onChange={handleChange}
-              email={email}
-              password={password}
+              onRegister={handleRegister}
             />
           </Route>
           <Route path='/sign-in'>
             <Login
-              onChange={handleChange}
-              onSubmit={handleAuthorization}
-              email={email}
-              password={password}
+              onLogin={authorizationAndSignIn}
             />
           </Route>
           <Route path='*'>

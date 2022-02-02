@@ -2,6 +2,24 @@ import React from "react";
 import { Link } from 'react-router-dom';
 
 export default function Registration(props) {
+    const [email, setEmail] = React.useState('');
+    const [password, setPassword] = React.useState('');
+
+    function handleChange(event) {
+        const target = event.target;
+        const value = target.value;
+        target.name === 'email-input' ? setEmail(value) : setPassword(value);
+    }
+
+    function handleSubmit(event) {
+        event.preventDefault();
+
+        props.onRegister({
+            email,
+            password,
+        });
+    }
+
     return (
         <div className="login">
             <div className="login__wrapper">
@@ -9,7 +27,7 @@ export default function Registration(props) {
                 <form
                     className="login__form"
                     name="login"
-                    onSubmit={props.onSubmit}
+                    onSubmit={handleSubmit}
                 >
                     <input
                         type="email"
@@ -18,8 +36,8 @@ export default function Registration(props) {
                         placeholder="Email"
                         name="email-input"
                         required
-                        onChange={props.onChange}
-                        value={props.email}
+                        onChange={handleChange}
+                        value={email}
                     />
                     <input
                         type="password"
@@ -28,8 +46,8 @@ export default function Registration(props) {
                         placeholder="Пароль"
                         name="password-input"
                         required
-                        onChange={props.onChange}
-                        value={props.password}
+                        onChange={handleChange}
+                        value={password}
                     />
                     <button
                         type="submit"
